@@ -56,9 +56,9 @@ services:
     restart: unless-stopped
 
   # Simple SMTP server
-  smtp:
-    image: namshi/smtp
-    restart: unless-stopped
+  # smtp:
+  #   image: namshi/smtp
+  #   restart: unless-stopped
 
   ############# Forum
 
@@ -94,7 +94,7 @@ services:
       - mongodb
       - mysql
       - rabbitmq
-      - smtp
+      # - smtp
 
   cms:
     image: regis/openedx:hawthorn
@@ -111,7 +111,7 @@ services:
       - mongodb
       - mysql
       - rabbitmq
-      - smtp
+      # - smtp
 
   ############# LMS and CMS workers
 
