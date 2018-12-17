@@ -65,7 +65,7 @@ stop: ## Stop all services
 configure: build-configurator ## Configure the environment prior to running the platform
 	docker run --rm -it --volume="$(PWD)/config:/openedx/config" \
 		-e USERID=$(USERID) -e SILENT=$(SILENT) $(CONFIGURE_OPTS) \
-		regis/openedx-configurator:hawthorn
+		eidev/openedx-configurator:hawthorn
 
 post_configure: $(post_configure_targets)
 
@@ -100,6 +100,14 @@ assets-lms: ## Collect static assets for the LMS
 	$(DOCKER_COMPOSE_RUN_OPENEDX) -e NO_PREREQ_INSTALL=True lms paver update_assets lms --settings=$(EDX_PLATFORM_SETTINGS)
 assets-cms: ## Collect static assets for the CMS
 	$(DOCKER_COMPOSE_RUN_OPENEDX) -e NO_PREREQ_INSTALL=True cms paver update_assets cms --settings=$(EDX_PLATFORM_SETTINGS)
+
+##################### Collectstatic
+
+collectstatic: assets-lms assets-cms ## Collect static assets for the LMS and the CMS
+collectstatic-lms: ## Collect static assets for the LMS
+	$(DOCKER_COMPOSE_RUN_OPENEDX) -e NO_PREREQ_INSTALL=True lms python manage.py lms collectstatic --no-input
+collectstatic-cms: ## Collect static assets for the CMS
+	$(DOCKER_COMPOSE_RUN_OPENEDX) -e NO_PREREQ_INSTALL=True cms python manage.py cms collectstatic --no-input
 
 ##################### Information
 
@@ -139,38 +147,38 @@ update: ## Download most recent images
 
 build: build-openedx build-configurator build-forum build-notes build-xqueue build-android ## Build all docker images
 build-openedx: ## Build the Open edX docker image
-	docker build -t regis/openedx:latest -t regis/openedx:hawthorn openedx/
+	docker build -t eidev/openedx:latest -t eidev/openedx:hawthorn openedx/
 build-configurator: ## Build the configurator docker image
-	docker build -t regis/openedx-configurator:latest -t regis/openedx-configurator:hawthorn configurator/
+	docker build -t eidev/openedx-configurator:latest -t eidev/openedx-configurator:hawthorn configurator/
 build-forum: ## Build the forum docker image
-	docker build -t regis/openedx-forum:latest -t regis/openedx-forum:hawthorn forum/
+	docker build -t eidev/openedx-forum:latest -t eidev/openedx-forum:hawthorn forum/
 build-notes: ## Build the Notes docker image
-	docker build -t regis/openedx-notes:latest -t regis/openedx-notes:hawthorn notes/
+	docker build -t eidev/openedx-notes:latest -t eidev/openedx-notes:hawthorn notes/
 build-xqueue: ## Build the Xqueue docker image
-	docker build -t regis/openedx-xqueue:latest -t regis/openedx-xqueue:hawthorn xqueue/
+	docker build -t eidev/openedx-xqueue:latest -t eidev/openedx-xqueue:hawthorn xqueue/
 build-android: ## Build the docker image for Android 
-	docker build -t regis/openedx-android:latest android/
+	docker build -t eidev/openedx-android:latest android/
 
 ################### Pushing images to docker hub
 
 push: push-openedx push-configurator push-forum push-notes push-xqueue push-android ## Push all images to dockerhub
 push-openedx: ## Push Open edX images to dockerhub
-	docker push regis/openedx:hawthorn
-	docker push regis/openedx:latest
+	docker push eidev/openedx:hawthorn
+	docker push eidev/openedx:latest
 push-configurator: ## Push configurator image to dockerhub
-	docker push regis/openedx-configurator:hawthorn
-	docker push regis/openedx-configurator:latest
+	docker push eidev/openedx-configurator:hawthorn
+	docker push eidev/openedx-configurator:latest
 push-forum: ## Push forum image to dockerhub
-	docker push regis/openedx-forum:hawthorn
-	docker push regis/openedx-forum:latest
+	docker push eidev/openedx-forum:hawthorn
+	docker push eidev/openedx-forum:latest
 push-notes: ## Push notes image to dockerhub
-	docker push regis/openedx-notes:hawthorn
-	docker push regis/openedx-notes:latest
+	docker push eidev/openedx-notes:hawthorn
+	docker push eidev/openedx-notes:latest
 push-xqueue: ## Push Xqueue image to dockerhub
-	docker push regis/openedx-xqueue:hawthorn
-	docker push regis/openedx-xqueue:latest
+	docker push eidev/openedx-xqueue:hawthorn
+	docker push eidev/openedx-xqueue:latest
 push-android: ## Push the Android image to dockerhub
-	docker push regis/openedx-android:latest
+	docker push eidev/openedx-android:latest
 
 dockerhub: build push ## Build and push all images to dockerhub
 
@@ -216,7 +224,7 @@ android-release: ## Build the final Android app (beta)
 
 stats: ## Collect anonymous information about the platform
 	@docker run --rm -it --volume="$(PWD)/config:/openedx/config" \
-		regis/openedx-configurator:hawthorn /openedx/config/openedx/stats 2> /dev/null|| true
+		eidev/openedx-configurator:hawthorn /openedx/config/openedx/stats 2> /dev/null|| true
 
 import-demo-course: ## Import the demo course from edX
 	$(DOCKER_COMPOSE_RUN_OPENEDX) cms /bin/bash -c "git clone https://github.com/edx/edx-demo-course ../edx-demo-course && git -C ../edx-demo-course checkout open-release/hawthorn.beta1 && python ./manage.py cms import ../data ../edx-demo-course"

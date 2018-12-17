@@ -116,7 +116,7 @@ This is the only non-automatic step in the install process. You will be asked va
 
     make update
 
-You will need to download the docker images from [Docker Hub](https://hub.docker.com/r/regis/openedx/). Depending on your bandwidth, this might take a long time. Minor image updates will be incremental, and thus much faster.
+You will need to download the docker images from [Docker Hub](https://hub.docker.com/r/eidev/openedx/). Depending on your bandwidth, this might take a long time. Minor image updates will be incremental, and thus much faster.
 
 ### Database creation, migrations and collection of static assets
 
