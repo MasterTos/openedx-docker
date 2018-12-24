@@ -48,6 +48,7 @@ services:
       - ./data/lms:/openedx/data/lms:ro
       - ./data/cms:/openedx/data/cms:ro
       - ./data/letsencrypt:/etc/letsencrypt/:ro
+      - ./data/register:/data/register:ro
 
   rabbitmq:
     image: rabbitmq:3.6.10
