@@ -10,3 +10,9 @@ services:
     restart: unless-stopped
     depends_on:
       - nginx
+    networks:
+      - edx
+
+networks:
+  edx:
+    external: true

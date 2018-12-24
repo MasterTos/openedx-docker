@@ -6,6 +6,8 @@ services:
   memcached:
     image: memcached:1.4.38
     restart: unless-stopped
+    networks:
+      - edx
 
   mongodb:
     image: mongo:3.2.16
@@ -14,6 +16,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./data/mongodb:/data/db
+    networks:
+      - edx
 
   mysql:
     image: mysql:5.6.36
@@ -22,6 +26,8 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
     env_file: ./config/mysql/auth.env
+    networks:
+      - edx
 
   elasticsearch:
     image: elasticsearch:1.5.2
@@ -36,6 +42,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./data/elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - edx
 
   nginx:
     image: nginx:1.13
@@ -49,17 +57,23 @@ services:
       - ./data/cms:/openedx/data/cms:ro
       - ./data/letsencrypt:/etc/letsencrypt/:ro
       - ./data/register:/data/register:ro
+    networks:
+      - edx
 
   rabbitmq:
     image: rabbitmq:3.6.10
     volumes:
       - ./data/rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
+    networks:
+      - edx
 
   # Simple SMTP server
-  # smtp:
-  #   image: namshi/smtp
-  #   restart: unless-stopped
+  smtp:
+    image: namshi/smtp
+    restart: unless-stopped
+    networks:
+      - edx
 
   ############# Forum
 
@@ -75,6 +89,8 @@ services:
     depends_on:
       - elasticsearch
       - mongodb
+    networks:
+      - edx
 
   ############# LMS and CMS
 
@@ -96,6 +112,8 @@ services:
       - mysql
       - rabbitmq
       # - smtp
+    networks:
+      - edx
 
   cms:
     image: eidev/openedx:hawthorn
@@ -113,6 +131,8 @@ services:
       - mysql
       - rabbitmq
       # - smtp
+    networks:
+      - edx
 
   ############# LMS and CMS workers
 
@@ -131,6 +151,8 @@ services:
       - ./data/lms:/openedx/data
     depends_on:
       - lms
+    networks:
+      - edx
 
   cms_worker:
     image: eidev/openedx:hawthorn
@@ -146,3 +168,9 @@ services:
       - ./data/cms:/openedx/data
     depends_on:
       - cms
+    networks:
+      - edx
+
+networks:
+  edx:
+    external: true

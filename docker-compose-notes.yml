@@ -14,5 +14,11 @@ services:
       - ./config/notes:/openedx/config
       - ./data/notes:/openedx/data
     restart: unless-stopped
+    networks:
+      - edx
     depends_on:
       - mysql
+
+networks:
+  edx:
+    external: true

@@ -12,6 +12,8 @@ services:
     restart: unless-stopped
     depends_on:
       - mysql
+    networks:
+      - edx
 
   xqueue_consumer:
     image: eidev/openedx-xqueue:hawthorn
@@ -25,3 +27,8 @@ services:
     command: ./manage.py run_consumer 12
     depends_on:
       - mysql
+    networks:
+      - edx
+networks:
+  edx:
+    external: true
